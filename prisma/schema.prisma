@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  output   = "../prisma/generated/type-graphql"
+  emitTranspiledCode = true
+}
+model Person {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  email      String      @unique
+  firstname  String?
+  lastname   String?
+  profession String?
+  city       String?
+  state      String?
+  zipcode    String?
+  phone      String?     @unique
+  summary    String?
+  social     Social[]
+  education  Education[]
+  Work       Work[]
+  skill      Skill[]
+  expertise  Expertise[]
+  role       Role        @default(USER)
+}
+
+model Social {
+  id       Int    @id @default(autoincrement())
+  title    String @db.VarChar(255)
+  author   Person?  @relation(fields: [authorId], references: [id])
+  authorId Int?
+  link     String
+}
+
+model Education {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  author    Person?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  location  String?
+  degree    String?
+  field     String?
+  startdate DateTime?
+  enddate   DateTime?
+}
+
+model Work {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  author    Person?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  employer  String?
+  city      String?
+  state     String?
+  summary   String?
+  startdate DateTime?
+  enddate   DateTime?
+}
+
+model Skill{
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  author    Person?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  rating    Int?
+}
+
+model Expertise{
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  author    Person?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  rating      String
+}
+
+enum Role {
+  USER
+  ADMIN
+}
